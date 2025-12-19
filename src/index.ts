@@ -12,6 +12,8 @@ if (!ctx) {
 canvas.width = 320;
 canvas.height = 320;
 
+let is_game_running: boolean = true;
+
 const grid: number[][] = Array.from(
     { length: 4}, 
     () => Array(4).fill(0)
@@ -68,7 +70,7 @@ const draw_cubes = (grid: number[][]) => {
 }
 
 draw_grid()
-grid[1]![0] = 2048
+// grid[1]![0] = 2048
 grid[0]![1] = 128
 grid[1]![1] = 128
 grid[2]![1] = 256
@@ -81,26 +83,31 @@ grid[1]![3] = 8
 draw_cubes(grid)
 
 body.addEventListener("keyup", (event: KeyboardEvent) => {
+    if (!is_game_running){
+        return
+    }
     switch(event.key) {
         case("ArrowLeft"):
-            move_cubes_left()
+            move_cubes_left(grid)
             break;
         case("ArrowRight"):
-            move_cubes_right()
+            move_cubes_right(grid)
             break;
         case("ArrowUp"):
-            move_cubes_up()
+            move_cubes_up(grid)
             break;
         case("ArrowDown"):
-            move_cubes_down()
+            move_cubes_down(grid)
             break;
     }
 
     draw_grid()
     draw_cubes(grid)
+    check_game_state(grid)
+    spawn_cube()
 })
 
-const move_cubes_left = () => {
+const move_cubes_left = (grid: number[][]) => {
     for (let x = 0; x < 4; x++) {        
         for (let i = 0; i < 3; i++) {
             for (let j = 0; j < 4; j++) {
@@ -118,7 +125,7 @@ const move_cubes_left = () => {
 
 }
 
-const move_cubes_right = () => {
+const move_cubes_right = (grid: number[][]) => {
     for (let x = 0; x < 4; x++) {        
         for (let i = 1; i < 4; i++) {
             for (let j = 0; j < 4; j++) {
@@ -135,7 +142,7 @@ const move_cubes_right = () => {
     }
 }
 
-const move_cubes_up = () => {
+const move_cubes_up = (grid: number[][]) => {
     for (let x = 0; x < 4; x++) {
         for (let i = 0; i < 4; i++) {
             for (let j = 0; j < 3; j++) {
@@ -152,7 +159,7 @@ const move_cubes_up = () => {
     }
 }
 
-const move_cubes_down = () => {
+const move_cubes_down = (grid: number[][]) => {
     for (let x = 0; x < 4; x++) {
         for (let i = 0; i < 4; i++) {
             for (let j = 1; j < 4; j++) {
@@ -167,4 +174,39 @@ const move_cubes_down = () => {
             }
         }
     }
+}
+
+const check_game_state = (grid: number[][]) => {
+    let arr: number[][] = []
+    for (let i = 0; i < 4; i++) {
+        for (let j = 0; j < 4; j++) {
+            if (grid[i]![j] === 2048){
+                is_game_running = false;
+                console.log("you won")
+                return
+            }
+            if (grid[i]![j] === 0){
+                arr.push([i,j])
+            }
+        }
+    }
+    if (arr.length === 0){
+        is_game_running = false;
+        console.log("you lost")
+    }
+}
+
+const spawn_cube = () => {
+    let arr:number[][] = []
+    for (let i = 0; i < 4; i++) {
+        for (let j = 0; j < 4; j++) {
+            if (grid[i]![j] === 0){
+                arr.push([i,j])
+            }
+        }
+    }
+    let random_index = Math.floor(Math.random() * arr.length)
+    let i = arr[random_index]![0]!
+    let j = arr[random_index]![1]!
+    grid[i]![j] = 2
 }
