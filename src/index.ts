@@ -72,9 +72,11 @@ grid[1]![0] = 2048
 grid[0]![1] = 128
 grid[1]![1] = 128
 grid[2]![1] = 256
+grid[2]![0] = 512
 grid[3]![1] = 512
 grid[1]![2] = 64
 grid[2]![2] = 128
+grid[2]![3] = 128
 grid[1]![3] = 8
 draw_cubes(grid)
 
@@ -82,18 +84,20 @@ body.addEventListener("keyup", (event: KeyboardEvent) => {
     switch(event.key) {
         case("ArrowLeft"):
             move_cubes_left()
-            console.log("Left")
             break;
         case("ArrowRight"):
-            console.log("Right")
+            move_cubes_right()
             break;
         case("ArrowUp"):
-            console.log("Up")
+            move_cubes_up()
             break;
         case("ArrowDown"):
-            console.log("Down")
+            move_cubes_down()
             break;
     }
+
+    draw_grid()
+    draw_cubes(grid)
 })
 
 const move_cubes_left = () => {
@@ -111,7 +115,56 @@ const move_cubes_left = () => {
             }
         }
     }
-    console.log(grid)
-    draw_grid()
-    draw_cubes(grid)
+
+}
+
+const move_cubes_right = () => {
+    for (let x = 0; x < 4; x++) {        
+        for (let i = 1; i < 4; i++) {
+            for (let j = 0; j < 4; j++) {
+                if (grid[i]![j]! === grid[i-1]![j]!){
+                    grid[i]![j]! += grid[i-1]![j]!
+                    grid[i-1]![j]! = 0
+                }
+                if (grid[i]![j]! === 0){
+                    grid[i]![j]! = grid[i-1]![j]!
+                    grid[i-1]![j]! = 0
+                }
+            }
+        }
+    }
+}
+
+const move_cubes_up = () => {
+    for (let x = 0; x < 4; x++) {
+        for (let i = 0; i < 4; i++) {
+            for (let j = 0; j < 3; j++) {
+                if (grid[i]![j]! === grid[i]![j+1]!){
+                    grid[i]![j]! += grid[i]![j+1]!
+                    grid[i]![j+1]! = 0
+                }
+                if (grid[i]![j]! === 0){
+                    grid[i]![j]! = grid[i]![j+1]!
+                    grid[i]![j+1]! = 0
+                }
+            }
+        }
+    }
+}
+
+const move_cubes_down = () => {
+    for (let x = 0; x < 4; x++) {
+        for (let i = 0; i < 4; i++) {
+            for (let j = 1; j < 4; j++) {
+                if (grid[i]![j]! === grid[i]![j-1]!){
+                    grid[i]![j]! += grid[i]![j-1]!
+                    grid[i]![j-1]! = 0
+                }
+                if (grid[i]![j]! === 0){
+                    grid[i]![j]! = grid[i]![j-1]!
+                    grid[i]![j-1]! = 0
+                }
+            }
+        }
+    }
 }
