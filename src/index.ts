@@ -46,6 +46,7 @@ const draw_cubes = (grid: number[][]) => {
         16: "#800000",
         32: "#FF00FF",
         128: "#FFFF00",
+        64: "#FF80FF",
         256: "#0080FF",
         512: "#00FF80",
         1024: "#8000FF",
@@ -71,21 +72,26 @@ const draw_cubes = (grid: number[][]) => {
 
 draw_grid()
 // grid[1]![0] = 2048
-grid[0]![1] = 128
-grid[1]![1] = 128
-grid[2]![1] = 256
-grid[2]![0] = 512
-grid[3]![1] = 512
-grid[1]![2] = 64
-grid[2]![2] = 128
-grid[2]![3] = 128
+// grid[0]![1] = 128
+// grid[1]![1] = 128
+// grid[2]![1] = 256
+// grid[2]![0] = 512
+// grid[3]![1] = 512
+// grid[1]![2] = 64
+// grid[2]![2] = 128
+// grid[2]![3] = 128
 grid[1]![3] = 8
 draw_cubes(grid)
 
 body.addEventListener("keyup", (event: KeyboardEvent) => {
+    check_game_state(grid)
+
     if (!is_game_running){
         return
     }
+    
+    let gridBefore = JSON.parse(JSON.stringify(grid));
+
     switch(event.key) {
         case("ArrowLeft"):
             move_cubes_left(grid)
@@ -99,19 +105,58 @@ body.addEventListener("keyup", (event: KeyboardEvent) => {
         case("ArrowDown"):
             move_cubes_down(grid)
             break;
+        default:
+            return;
+    }
+
+    if(JSON.stringify(gridBefore) === JSON.stringify(grid)){
+        return
     }
 
     draw_grid()
+    spawn_cube(grid)
     draw_cubes(grid)
-    check_game_state(grid)
-    spawn_cube()
+})
+
+const setScore = (score: number) => {
+    score_label.textContent = `Score: ${score}`
+}
+
+const getRecord = () => {
+    let record: number = Number(localStorage.getItem("Record")) || 0;
+    return record
+}
+
+const setRecord = (score: number) => {
+    if (score >= getRecord()){
+        localStorage.setItem("Record", String(score));
+        record_label.textContent = `Record: ${score}`
+    }
+    else {
+        record_label.textContent = `Record: ${getRecord()}`
+    }
+}
+
+restart_button.addEventListener("click", () => {
+    setScore(0)
+    getRecord()
+    setRecord(0)
+
+    for (let i = 0; i < 4; i++) {
+        for (let j = 0; j < 4; j++) {
+            grid[i]![j] = 0
+        }
+    }
+    draw_grid()
+    spawn_cube(grid)
+    draw_cubes(grid)
 })
 
 const move_cubes_left = (grid: number[][]) => {
-    for (let x = 0; x < 4; x++) {        
+    for (let x = 0; x < 3; x++) {        
         for (let i = 0; i < 3; i++) {
             for (let j = 0; j < 4; j++) {
-                if (grid[i]![j]! === grid[i+1]![j]!){
+                if (grid[i]![j]! === grid[i+1]![j]! && grid[i]![j] !== 0){
                     grid[i]![j]! += grid[i+1]![j]!
                     grid[i+1]![j]! = 0
                 }
@@ -126,7 +171,7 @@ const move_cubes_left = (grid: number[][]) => {
 }
 
 const move_cubes_right = (grid: number[][]) => {
-    for (let x = 0; x < 4; x++) {        
+    for (let x = 0; x < 3; x++) {        
         for (let i = 1; i < 4; i++) {
             for (let j = 0; j < 4; j++) {
                 if (grid[i]![j]! === grid[i-1]![j]!){
@@ -143,7 +188,7 @@ const move_cubes_right = (grid: number[][]) => {
 }
 
 const move_cubes_up = (grid: number[][]) => {
-    for (let x = 0; x < 4; x++) {
+    for (let x = 0; x < 3; x++) {
         for (let i = 0; i < 4; i++) {
             for (let j = 0; j < 3; j++) {
                 if (grid[i]![j]! === grid[i]![j+1]!){
@@ -160,7 +205,7 @@ const move_cubes_up = (grid: number[][]) => {
 }
 
 const move_cubes_down = (grid: number[][]) => {
-    for (let x = 0; x < 4; x++) {
+    for (let x = 0; x < 3; x++) {
         for (let i = 0; i < 4; i++) {
             for (let j = 1; j < 4; j++) {
                 if (grid[i]![j]! === grid[i]![j-1]!){
@@ -177,26 +222,46 @@ const move_cubes_down = (grid: number[][]) => {
 }
 
 const check_game_state = (grid: number[][]) => {
-    let arr: number[][] = []
     for (let i = 0; i < 4; i++) {
         for (let j = 0; j < 4; j++) {
             if (grid[i]![j] === 2048){
                 is_game_running = false;
                 console.log("you won")
-                return
-            }
-            if (grid[i]![j] === 0){
-                arr.push([i,j])
+                return true
             }
         }
     }
-    if (arr.length === 0){
-        is_game_running = false;
-        console.log("you lost")
+
+    for (let i = 0; i < 4; i++) {
+        for (let j = 0; j < 4; j++) {
+            if (grid[i]![j] === 0) {
+                return true
+            }
+        }
     }
+
+    for (let i = 0; i < 3; i++) {
+        for (let j = 0; j < 4; j++) {
+            if (grid[i]![j] === grid[i+1]![j]){
+                return true
+            }
+        }
+    }
+
+    for (let i = 0; i < 4; i++) {
+        for (let j = 0; j < 3; j++) {
+            if (grid[i]![j] === grid[i]![j+1]){
+                return true
+            }
+        }
+    }
+
+    is_game_running = false;
+    console.log("you lost")
+    return false
 }
 
-const spawn_cube = () => {
+const spawn_cube = (grid: number[][]) => {
     let arr:number[][] = []
     for (let i = 0; i < 4; i++) {
         for (let j = 0; j < 4; j++) {
@@ -208,5 +273,6 @@ const spawn_cube = () => {
     let random_index = Math.floor(Math.random() * arr.length)
     let i = arr[random_index]![0]!
     let j = arr[random_index]![1]!
-    grid[i]![j] = 2
+    let random_number = Math.floor(Math.random()*10)+1
+    random_number > 2 ? grid[i]![j] = 2 : grid[i]![j] = 4
 }
