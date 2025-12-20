@@ -156,7 +156,7 @@ const move_cubes_left = (grid: number[][]) => {
     for (let x = 0; x < 3; x++) {        
         for (let i = 0; i < 3; i++) {
             for (let j = 0; j < 4; j++) {
-                if (grid[i]![j]! === grid[i+1]![j]! && grid[i]![j] !== 0){
+                if (grid[i]![j]! === grid[i+1]![j]!){
                     grid[i]![j]! += grid[i+1]![j]!
                     grid[i+1]![j]! = 0
                 }
