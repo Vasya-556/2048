@@ -14,11 +14,18 @@ canvas.height = 320;
 
 let is_game_running: boolean = true;
 let totalScore: number = 0;
-enum Directions {
-    left,
-    right,
-    up,
-    down,
+const colors = {
+    2: "#0000FF",
+    4: "#00FF00",
+    8: "#00FFFF",
+    16: "#800000",
+    32: "#FF00FF",
+    128: "#FFFF00",
+    64: "#FF80FF",
+    256: "#0080FF",
+    512: "#00FF80",
+    1024: "#8000FF",
+    2048: "#FF8000"
 }
 
 const grid: number[][] = Array.from(
@@ -46,32 +53,18 @@ const draw_grid = () => {
 }
 
 const draw_cubes = (grid: number[][]) => {
-    const colors = {
-        2: "#0000FF",
-        4: "#00FF00",
-        8: "#00FFFF",
-        16: "#800000",
-        32: "#FF00FF",
-        128: "#FFFF00",
-        64: "#FF80FF",
-        256: "#0080FF",
-        512: "#00FF80",
-        1024: "#8000FF",
-        2048: "#FF8000"
-    }
-
-    for (let i = 0; i < 4; i++) {
-        for (let j = 0; j < 4; j++) {
-            if (grid[i]![j] !== 0){
+    for (let x_axis = 0; x_axis < 4; x_axis++) {
+        for (let y_axis = 0; y_axis < 4; y_axis++) {
+            if (grid[x_axis]![y_axis] !== 0){
                 ctx.beginPath()
-                ctx.rect(16+i*76,16+j*76,60,60)
-                ctx.fillStyle = colors[grid[i]![j]! as keyof typeof colors || 2] || "#0000FF"
+                ctx.rect(16+x_axis*76,16+y_axis*76,60,60)
+                ctx.fillStyle = colors[grid[x_axis]![y_axis]! as keyof typeof colors || 2] || "#0000FF"
                 ctx.fill()
                 ctx.fillStyle = "black"
                 ctx.textAlign = "center"
                 ctx.textBaseline = "middle"
                 ctx.font = "24px Arial";
-                ctx.fillText(String(grid[i]![j]),16+i*76+30,16+j*76+30);
+                ctx.fillText(String(grid[x_axis]![y_axis]),16+x_axis*76+30,16+y_axis*76+30);
             }
         }
     }
@@ -164,16 +157,16 @@ restart_button.addEventListener("click", () => {
 
 const move_cubes_left = (grid: number[][]) => {
     for (let x = 0; x < 3; x++) {        
-        for (let i = 0; i < 3; i++) {
-            for (let j = 0; j < 4; j++) {
-                if (grid[i]![j]! === grid[i+1]![j]!){
-                    grid[i]![j]! += grid[i+1]![j]!
-                    grid[i+1]![j]! = 0
-                    totalScore += grid[i]![j]!
+        for (let x_axis = 0; x_axis < 3; x_axis++) {
+            for (let y_axis = 0; y_axis < 4; y_axis++) {
+                if (grid[x_axis]![y_axis]! === grid[x_axis+1]![y_axis]!){
+                    grid[x_axis]![y_axis]! += grid[x_axis+1]![y_axis]!
+                    grid[x_axis+1]![y_axis]! = 0
+                    totalScore += grid[x_axis]![y_axis]!
                 }
-                if (grid[i]![j]! === 0){
-                    grid[i]![j]! = grid[i+1]![j]!
-                    grid[i+1]![j]! = 0
+                if (grid[x_axis]![y_axis]! === 0){
+                    grid[x_axis]![y_axis]! = grid[x_axis+1]![y_axis]!
+                    grid[x_axis+1]![y_axis]! = 0
                 }
             }
         }
@@ -182,16 +175,16 @@ const move_cubes_left = (grid: number[][]) => {
 
 const move_cubes_right = (grid: number[][]) => {
     for (let x = 0; x < 3; x++) {        
-        for (let i = 1; i < 4; i++) {
-            for (let j = 0; j < 4; j++) {
-                if (grid[i]![j]! === grid[i-1]![j]!){
-                    grid[i]![j]! += grid[i-1]![j]!
-                    grid[i-1]![j]! = 0
-                    totalScore += grid[i]![j]!
+        for (let x_axis = 1; x_axis < 4; x_axis++) {
+            for (let y_axis = 0; y_axis < 4; y_axis++) {
+                if (grid[x_axis]![y_axis]! === grid[x_axis-1]![y_axis]!){
+                    grid[x_axis]![y_axis]! += grid[x_axis-1]![y_axis]!
+                    grid[x_axis-1]![y_axis]! = 0
+                    totalScore += grid[x_axis]![y_axis]!
                 }
-                if (grid[i]![j]! === 0){
-                    grid[i]![j]! = grid[i-1]![j]!
-                    grid[i-1]![j]! = 0
+                if (grid[x_axis]![y_axis]! === 0){
+                    grid[x_axis]![y_axis]! = grid[x_axis-1]![y_axis]!
+                    grid[x_axis-1]![y_axis]! = 0
                 }
             }
         }
@@ -200,16 +193,16 @@ const move_cubes_right = (grid: number[][]) => {
 
 const move_cubes_up = (grid: number[][]) => {
     for (let x = 0; x < 3; x++) {
-        for (let i = 0; i < 4; i++) {
-            for (let j = 0; j < 3; j++) {
-                if (grid[i]![j]! === grid[i]![j+1]!){
-                    grid[i]![j]! += grid[i]![j+1]!
-                    grid[i]![j+1]! = 0
-                    totalScore += grid[i]![j]!
+        for (let x_axis = 0; x_axis < 4; x_axis++) {
+            for (let y_axis = 0; y_axis < 3; y_axis++) {
+                if (grid[x_axis]![y_axis]! === grid[x_axis]![y_axis+1]!){
+                    grid[x_axis]![y_axis]! += grid[x_axis]![y_axis+1]!
+                    grid[x_axis]![y_axis+1]! = 0
+                    totalScore += grid[x_axis]![y_axis]!
                 }
-                if (grid[i]![j]! === 0){
-                    grid[i]![j]! = grid[i]![j+1]!
-                    grid[i]![j+1]! = 0
+                if (grid[x_axis]![y_axis]! === 0){
+                    grid[x_axis]![y_axis]! = grid[x_axis]![y_axis+1]!
+                    grid[x_axis]![y_axis+1]! = 0
                 }
             }
         }
@@ -218,16 +211,16 @@ const move_cubes_up = (grid: number[][]) => {
 
 const move_cubes_down = (grid: number[][]) => {
     for (let x = 0; x < 3; x++) {
-        for (let i = 0; i < 4; i++) {
-            for (let j = 1; j < 4; j++) {
-                if (grid[i]![j]! === grid[i]![j-1]!){
-                    grid[i]![j]! += grid[i]![j-1]!
-                    grid[i]![j-1]! = 0
-                    totalScore += grid[i]![j]!
+        for (let x_axis = 0; x_axis < 4; x_axis++) {
+            for (let y_axis = 1; y_axis < 4; y_axis++) {
+                if (grid[x_axis]![y_axis]! === grid[x_axis]![y_axis-1]!){
+                    grid[x_axis]![y_axis]! += grid[x_axis]![y_axis-1]!
+                    grid[x_axis]![y_axis-1]! = 0
+                    totalScore += grid[x_axis]![y_axis]!
                 }
-                if (grid[i]![j]! === 0){
-                    grid[i]![j]! = grid[i]![j-1]!
-                    grid[i]![j-1]! = 0
+                if (grid[x_axis]![y_axis]! === 0){
+                    grid[x_axis]![y_axis]! = grid[x_axis]![y_axis-1]!
+                    grid[x_axis]![y_axis-1]! = 0
                 }
             }
         }
