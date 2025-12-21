@@ -53,18 +53,18 @@ const drawGrid = () => {
 }
 
 const drawCubes = (grid: number[][]) => {
-    for (let x_axis = 0; x_axis < 4; x_axis++) {
-        for (let y_axis = 0; y_axis < 4; y_axis++) {
-            if (grid[x_axis]![y_axis] !== 0){
+    for (let xAxis = 0; xAxis < 4; xAxis++) {
+        for (let yAxis = 0; yAxis < 4; yAxis++) {
+            if (grid[xAxis]![yAxis] !== 0){
                 ctx.beginPath()
-                ctx.rect(16+x_axis*76,16+y_axis*76,60,60)
-                ctx.fillStyle = COLORS[grid[x_axis]![y_axis]! as keyof typeof COLORS || 2] || "#0000FF"
+                ctx.rect(16+xAxis*76,16+yAxis*76,60,60)
+                ctx.fillStyle = COLORS[grid[xAxis]![yAxis]! as keyof typeof COLORS || 2] || "#0000FF"
                 ctx.fill()
                 ctx.fillStyle = "black"
                 ctx.textAlign = "center"
                 ctx.textBaseline = "middle"
                 ctx.font = "24px Arial";
-                ctx.fillText(String(grid[x_axis]![y_axis]),16+x_axis*76+30,16+y_axis*76+30);
+                ctx.fillText(String(grid[xAxis]![yAxis]),16+xAxis*76+30,16+yAxis*76+30);
             }
         }
     }
@@ -157,16 +157,16 @@ restartButton.addEventListener("click", () => {
 
 const moveCubesLeft = (grid: number[][]) => {
     for (let x = 0; x < 3; x++) {        
-        for (let x_axis = 0; x_axis < 3; x_axis++) {
-            for (let y_axis = 0; y_axis < 4; y_axis++) {
-                if (grid[x_axis]![y_axis]! === grid[x_axis+1]![y_axis]!){
-                    grid[x_axis]![y_axis]! += grid[x_axis+1]![y_axis]!
-                    grid[x_axis+1]![y_axis]! = 0
-                    totalScore += grid[x_axis]![y_axis]!
+        for (let xAxis = 0; xAxis < 3; xAxis++) {
+            for (let yAxis = 0; yAxis < 4; yAxis++) {
+                if (grid[xAxis]![yAxis]! === grid[xAxis+1]![yAxis]!){
+                    grid[xAxis]![yAxis]! += grid[xAxis+1]![yAxis]!
+                    grid[xAxis+1]![yAxis]! = 0
+                    totalScore += grid[xAxis]![yAxis]!
                 }
-                if (grid[x_axis]![y_axis]! === 0){
-                    grid[x_axis]![y_axis]! = grid[x_axis+1]![y_axis]!
-                    grid[x_axis+1]![y_axis]! = 0
+                if (grid[xAxis]![yAxis]! === 0){
+                    grid[xAxis]![yAxis]! = grid[xAxis+1]![yAxis]!
+                    grid[xAxis+1]![yAxis]! = 0
                 }
             }
         }
@@ -175,16 +175,16 @@ const moveCubesLeft = (grid: number[][]) => {
 
 const moveCubesRight = (grid: number[][]) => {
     for (let x = 0; x < 3; x++) {        
-        for (let x_axis = 1; x_axis < 4; x_axis++) {
-            for (let y_axis = 0; y_axis < 4; y_axis++) {
-                if (grid[x_axis]![y_axis]! === grid[x_axis-1]![y_axis]!){
-                    grid[x_axis]![y_axis]! += grid[x_axis-1]![y_axis]!
-                    grid[x_axis-1]![y_axis]! = 0
-                    totalScore += grid[x_axis]![y_axis]!
+        for (let xAxis = 1; xAxis < 4; xAxis++) {
+            for (let yAxis = 0; yAxis < 4; yAxis++) {
+                if (grid[xAxis]![yAxis]! === grid[xAxis-1]![yAxis]!){
+                    grid[xAxis]![yAxis]! += grid[xAxis-1]![yAxis]!
+                    grid[xAxis-1]![yAxis]! = 0
+                    totalScore += grid[xAxis]![yAxis]!
                 }
-                if (grid[x_axis]![y_axis]! === 0){
-                    grid[x_axis]![y_axis]! = grid[x_axis-1]![y_axis]!
-                    grid[x_axis-1]![y_axis]! = 0
+                if (grid[xAxis]![yAxis]! === 0){
+                    grid[xAxis]![yAxis]! = grid[xAxis-1]![yAxis]!
+                    grid[xAxis-1]![yAxis]! = 0
                 }
             }
         }
@@ -193,16 +193,16 @@ const moveCubesRight = (grid: number[][]) => {
 
 const moveCubesUp = (grid: number[][]) => {
     for (let x = 0; x < 3; x++) {
-        for (let x_axis = 0; x_axis < 4; x_axis++) {
-            for (let y_axis = 0; y_axis < 3; y_axis++) {
-                if (grid[x_axis]![y_axis]! === grid[x_axis]![y_axis+1]!){
-                    grid[x_axis]![y_axis]! += grid[x_axis]![y_axis+1]!
-                    grid[x_axis]![y_axis+1]! = 0
-                    totalScore += grid[x_axis]![y_axis]!
+        for (let xAxis = 0; xAxis < 4; xAxis++) {
+            for (let yAxis = 0; yAxis < 3; yAxis++) {
+                if (grid[xAxis]![yAxis]! === grid[xAxis]![yAxis+1]!){
+                    grid[xAxis]![yAxis]! += grid[xAxis]![yAxis+1]!
+                    grid[xAxis]![yAxis+1]! = 0
+                    totalScore += grid[xAxis]![yAxis]!
                 }
-                if (grid[x_axis]![y_axis]! === 0){
-                    grid[x_axis]![y_axis]! = grid[x_axis]![y_axis+1]!
-                    grid[x_axis]![y_axis+1]! = 0
+                if (grid[xAxis]![yAxis]! === 0){
+                    grid[xAxis]![yAxis]! = grid[xAxis]![yAxis+1]!
+                    grid[xAxis]![yAxis+1]! = 0
                 }
             }
         }
@@ -211,16 +211,16 @@ const moveCubesUp = (grid: number[][]) => {
 
 const moveCubesDown = (grid: number[][]) => {
     for (let x = 0; x < 3; x++) {
-        for (let x_axis = 0; x_axis < 4; x_axis++) {
-            for (let y_axis = 1; y_axis < 4; y_axis++) {
-                if (grid[x_axis]![y_axis]! === grid[x_axis]![y_axis-1]!){
-                    grid[x_axis]![y_axis]! += grid[x_axis]![y_axis-1]!
-                    grid[x_axis]![y_axis-1]! = 0
-                    totalScore += grid[x_axis]![y_axis]!
+        for (let xAxis = 0; xAxis < 4; xAxis++) {
+            for (let yAxis = 1; yAxis < 4; yAxis++) {
+                if (grid[xAxis]![yAxis]! === grid[xAxis]![yAxis-1]!){
+                    grid[xAxis]![yAxis]! += grid[xAxis]![yAxis-1]!
+                    grid[xAxis]![yAxis-1]! = 0
+                    totalScore += grid[xAxis]![yAxis]!
                 }
-                if (grid[x_axis]![y_axis]! === 0){
-                    grid[x_axis]![y_axis]! = grid[x_axis]![y_axis-1]!
-                    grid[x_axis]![y_axis-1]! = 0
+                if (grid[xAxis]![yAxis]! === 0){
+                    grid[xAxis]![yAxis]! = grid[xAxis]![yAxis-1]!
+                    grid[xAxis]![yAxis-1]! = 0
                 }
             }
         }
