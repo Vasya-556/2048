@@ -13,6 +13,13 @@ canvas.width = 320;
 canvas.height = 320;
 
 let is_game_running: boolean = true;
+let totalScore: number = 0;
+enum Directions {
+    left,
+    right,
+    up,
+    down,
+}
 
 const grid: number[][] = Array.from(
     { length: 4}, 
@@ -109,6 +116,9 @@ body.addEventListener("keyup", (event: KeyboardEvent) => {
             return;
     }
 
+    setScore()
+    setRecord()
+
     if(JSON.stringify(gridBefore) === JSON.stringify(grid)){
         return
     }
@@ -118,35 +128,35 @@ body.addEventListener("keyup", (event: KeyboardEvent) => {
     draw_cubes(grid)
 })
 
-const setScore = (score: number) => {
-    score_label.textContent = `Score: ${score}`
+const setScore = () => {
+    score_label.textContent = `${totalScore}`
 }
 
-const getRecord = () => {
+const setRecord = () => {
     let record: number = Number(localStorage.getItem("Record")) || 0;
-    return record
-}
 
-const setRecord = (score: number) => {
-    if (score >= getRecord()){
-        localStorage.setItem("Record", String(score));
-        record_label.textContent = `Record: ${score}`
+    if (totalScore >= record){
+        localStorage.setItem("Record", String(totalScore));
+        record_label.textContent = `${totalScore}`
     }
     else {
-        record_label.textContent = `Record: ${getRecord()}`
+        record_label.textContent = `${record}`
     }
 }
 
 restart_button.addEventListener("click", () => {
-    setScore(0)
-    getRecord()
-    setRecord(0)
+    totalScore = 0;
+    setScore()
+    setRecord()
 
     for (let i = 0; i < 4; i++) {
         for (let j = 0; j < 4; j++) {
             grid[i]![j] = 0
         }
     }
+
+    is_game_running = true;
+    
     draw_grid()
     spawn_cube(grid)
     draw_cubes(grid)
@@ -159,6 +169,7 @@ const move_cubes_left = (grid: number[][]) => {
                 if (grid[i]![j]! === grid[i+1]![j]!){
                     grid[i]![j]! += grid[i+1]![j]!
                     grid[i+1]![j]! = 0
+                    totalScore += grid[i]![j]!
                 }
                 if (grid[i]![j]! === 0){
                     grid[i]![j]! = grid[i+1]![j]!
@@ -167,7 +178,6 @@ const move_cubes_left = (grid: number[][]) => {
             }
         }
     }
-
 }
 
 const move_cubes_right = (grid: number[][]) => {
@@ -177,6 +187,7 @@ const move_cubes_right = (grid: number[][]) => {
                 if (grid[i]![j]! === grid[i-1]![j]!){
                     grid[i]![j]! += grid[i-1]![j]!
                     grid[i-1]![j]! = 0
+                    totalScore += grid[i]![j]!
                 }
                 if (grid[i]![j]! === 0){
                     grid[i]![j]! = grid[i-1]![j]!
@@ -194,6 +205,7 @@ const move_cubes_up = (grid: number[][]) => {
                 if (grid[i]![j]! === grid[i]![j+1]!){
                     grid[i]![j]! += grid[i]![j+1]!
                     grid[i]![j+1]! = 0
+                    totalScore += grid[i]![j]!
                 }
                 if (grid[i]![j]! === 0){
                     grid[i]![j]! = grid[i]![j+1]!
@@ -211,6 +223,7 @@ const move_cubes_down = (grid: number[][]) => {
                 if (grid[i]![j]! === grid[i]![j-1]!){
                     grid[i]![j]! += grid[i]![j-1]!
                     grid[i]![j-1]! = 0
+                    totalScore += grid[i]![j]!
                 }
                 if (grid[i]![j]! === 0){
                     grid[i]![j]! = grid[i]![j-1]!
