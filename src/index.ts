@@ -1,7 +1,7 @@
 const body = document.body as HTMLBodyElement;
-const score_label = document.getElementById("score-label") as HTMLLabelElement
-const record_label = document.getElementById("record-label") as HTMLLabelElement
-const restart_button = document.getElementById("restart-button") as HTMLButtonElement
+const scoreLabel = document.getElementById("score-label") as HTMLLabelElement
+const recordLabel = document.getElementById("record-label") as HTMLLabelElement
+const restartButton = document.getElementById("restart-button") as HTMLButtonElement
 const canvas = document.getElementById("canvas") as HTMLCanvasElement;
 const ctx = canvas.getContext("2d")
 
@@ -12,9 +12,9 @@ if (!ctx) {
 canvas.width = 320;
 canvas.height = 320;
 
-let is_game_running: boolean = true;
+let isGameRunning: boolean = true;
 let totalScore: number = 0;
-const colors = {
+const COLORS = {
     2: "#0000FF",
     4: "#00FF00",
     8: "#00FFFF",
@@ -33,11 +33,11 @@ const grid: number[][] = Array.from(
     () => Array(4).fill(0)
 );
 
-const clear_canvas = () => {
+const cleatCanvas = () => {
     ctx.clearRect(0,0,320,320);
 }
 
-const draw_grid = () => {
+const drawGrid = () => {
     ctx.rect(0,0,320,320)
     ctx.fillStyle = "gray"
     ctx.fill()
@@ -52,13 +52,13 @@ const draw_grid = () => {
     }
 }
 
-const draw_cubes = (grid: number[][]) => {
+const drawCubes = (grid: number[][]) => {
     for (let x_axis = 0; x_axis < 4; x_axis++) {
         for (let y_axis = 0; y_axis < 4; y_axis++) {
             if (grid[x_axis]![y_axis] !== 0){
                 ctx.beginPath()
                 ctx.rect(16+x_axis*76,16+y_axis*76,60,60)
-                ctx.fillStyle = colors[grid[x_axis]![y_axis]! as keyof typeof colors || 2] || "#0000FF"
+                ctx.fillStyle = COLORS[grid[x_axis]![y_axis]! as keyof typeof COLORS || 2] || "#0000FF"
                 ctx.fill()
                 ctx.fillStyle = "black"
                 ctx.textAlign = "center"
@@ -70,7 +70,7 @@ const draw_cubes = (grid: number[][]) => {
     }
 }
 
-draw_grid()
+drawGrid()
 // grid[1]![0] = 2048
 // grid[0]![1] = 128
 // grid[1]![1] = 128
@@ -81,12 +81,12 @@ draw_grid()
 // grid[2]![2] = 128
 // grid[2]![3] = 128
 grid[1]![3] = 8
-draw_cubes(grid)
+drawCubes(grid)
 
 body.addEventListener("keyup", (event: KeyboardEvent) => {
-    check_game_state(grid)
+    checkGameState(grid)
 
-    if (!is_game_running){
+    if (!isGameRunning){
         return
     }
     
@@ -94,16 +94,16 @@ body.addEventListener("keyup", (event: KeyboardEvent) => {
 
     switch(event.key) {
         case("ArrowLeft"):
-            move_cubes_left(grid)
+            moveCubesLeft(grid)
             break;
         case("ArrowRight"):
-            move_cubes_right(grid)
+            moveCubesRight(grid)
             break;
         case("ArrowUp"):
-            move_cubes_up(grid)
+            moveCubesUp(grid)
             break;
         case("ArrowDown"):
-            move_cubes_down(grid)
+            moveCubesDown(grid)
             break;
         default:
             return;
@@ -116,13 +116,13 @@ body.addEventListener("keyup", (event: KeyboardEvent) => {
         return
     }
 
-    draw_grid()
-    spawn_cube(grid)
-    draw_cubes(grid)
+    drawGrid()
+    spawnCube(grid)
+    drawCubes(grid)
 })
 
 const setScore = () => {
-    score_label.textContent = `${totalScore}`
+    scoreLabel.textContent = `${totalScore}`
 }
 
 const setRecord = () => {
@@ -130,14 +130,14 @@ const setRecord = () => {
 
     if (totalScore >= record){
         localStorage.setItem("Record", String(totalScore));
-        record_label.textContent = `${totalScore}`
+        recordLabel.textContent = `${totalScore}`
     }
     else {
-        record_label.textContent = `${record}`
+        recordLabel.textContent = `${record}`
     }
 }
 
-restart_button.addEventListener("click", () => {
+restartButton.addEventListener("click", () => {
     totalScore = 0;
     setScore()
     setRecord()
@@ -148,14 +148,14 @@ restart_button.addEventListener("click", () => {
         }
     }
 
-    is_game_running = true;
+    isGameRunning = true;
     
-    draw_grid()
-    spawn_cube(grid)
-    draw_cubes(grid)
+    drawGrid()
+    spawnCube(grid)
+    drawCubes(grid)
 })
 
-const move_cubes_left = (grid: number[][]) => {
+const moveCubesLeft = (grid: number[][]) => {
     for (let x = 0; x < 3; x++) {        
         for (let x_axis = 0; x_axis < 3; x_axis++) {
             for (let y_axis = 0; y_axis < 4; y_axis++) {
@@ -173,7 +173,7 @@ const move_cubes_left = (grid: number[][]) => {
     }
 }
 
-const move_cubes_right = (grid: number[][]) => {
+const moveCubesRight = (grid: number[][]) => {
     for (let x = 0; x < 3; x++) {        
         for (let x_axis = 1; x_axis < 4; x_axis++) {
             for (let y_axis = 0; y_axis < 4; y_axis++) {
@@ -191,7 +191,7 @@ const move_cubes_right = (grid: number[][]) => {
     }
 }
 
-const move_cubes_up = (grid: number[][]) => {
+const moveCubesUp = (grid: number[][]) => {
     for (let x = 0; x < 3; x++) {
         for (let x_axis = 0; x_axis < 4; x_axis++) {
             for (let y_axis = 0; y_axis < 3; y_axis++) {
@@ -209,7 +209,7 @@ const move_cubes_up = (grid: number[][]) => {
     }
 }
 
-const move_cubes_down = (grid: number[][]) => {
+const moveCubesDown = (grid: number[][]) => {
     for (let x = 0; x < 3; x++) {
         for (let x_axis = 0; x_axis < 4; x_axis++) {
             for (let y_axis = 1; y_axis < 4; y_axis++) {
@@ -227,11 +227,11 @@ const move_cubes_down = (grid: number[][]) => {
     }
 }
 
-const check_game_state = (grid: number[][]) => {
+const checkGameState = (grid: number[][]) => {
     for (let i = 0; i < 4; i++) {
         for (let j = 0; j < 4; j++) {
             if (grid[i]![j] === 2048){
-                is_game_running = false;
+                isGameRunning = false;
                 console.log("you won")
                 return true
             }
@@ -262,12 +262,12 @@ const check_game_state = (grid: number[][]) => {
         }
     }
 
-    is_game_running = false;
+    isGameRunning = false;
     console.log("you lost")
     return false
 }
 
-const spawn_cube = (grid: number[][]) => {
+const spawnCube = (grid: number[][]) => {
     let arr:number[][] = []
     for (let i = 0; i < 4; i++) {
         for (let j = 0; j < 4; j++) {
