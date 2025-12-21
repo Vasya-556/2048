@@ -276,9 +276,9 @@ const spawnCube = (grid: number[][]) => {
             }
         }
     }
-    let random_index = Math.floor(Math.random() * arr.length)
-    let i = arr[random_index]![0]!
-    let j = arr[random_index]![1]!
-    let random_number = Math.floor(Math.random()*10)+1
-    random_number > 2 ? grid[i]![j] = 2 : grid[i]![j] = 4
+    let randomIndex = Math.floor(Math.random() * arr.length)
+    let i = arr[randomIndex]![0]!
+    let j = arr[randomIndex]![1]!
+    let randomNumber = Math.floor(Math.random()*10)+1
+    randomNumber > 2 ? grid[i]![j] = 2 : grid[i]![j] = 4
 }
