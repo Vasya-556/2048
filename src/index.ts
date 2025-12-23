@@ -203,10 +203,43 @@ const runGame = (move: string) => {
 
     setScore()
     spawnRandomTile()
+    drawGrid()
 }
 
 const checkGameState = () => {
+    forEachTile((tile) => {
+        if(tile.getValue() >= 2048){
+            isGameRunning = false;
+            console.log("you won")
+            return
+        }
+    })
+    
+    forEachTile((tile) => {
+        if(tile.getValue() === 0){
+            return
+        }
+    })
 
+    for (let xAxis = 0; xAxis < 3; xAxis++) {
+        for (let yAxis = 0; yAxis < 4; yAxis++) {
+            if (grid[xAxis]![yAxis]!.getValue() === grid[xAxis+1]![yAxis]!.getValue()){
+                return
+            }
+        }
+    }
+
+    for (let xAxis = 0; xAxis < 4; xAxis++) {
+        for (let yAxis = 0; yAxis < 3; yAxis++) {
+            if (grid[xAxis]![yAxis]!.getValue() === grid[xAxis]![yAxis+1]!.getValue()){
+                return
+            }
+        }
+    }
+
+    isGameRunning = false;
+    console.log("you lost")
+    return
 }
 
 const cloneGrids = () => {
