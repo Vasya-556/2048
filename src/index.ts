@@ -1,3 +1,4 @@
+import { COLORS } from "./Colors.js";
 import { Tile } from "./Tile.js";
 
 const body = document.body as HTMLBodyElement;
@@ -6,13 +7,36 @@ const recordLabel = document.getElementById("record-label") as HTMLLabelElement
 const restartButton = document.getElementById("restart-button") as HTMLButtonElement
 const canvas = document.getElementById("canvas") as HTMLCanvasElement;
 const ctx = canvas.getContext("2d")
+const canvasBackground = document.getElementById("canvas-background") as HTMLCanvasElement;
+const ctxBackground = canvasBackground.getContext("2d")
+const ANIMATION_SPEED = 19;
 
 if (!ctx) {
     throw new Error("Could not get 2D context");
 }
 
+if (!ctxBackground) {
+    throw new Error("Could not get 2D context");
+}
+
 canvas.width = 320;
 canvas.height = 320;
+
+canvasBackground.width = 320;
+canvasBackground.height = 320;
+
+ctxBackground.rect(0,0,320,320)
+ctxBackground.fillStyle = "gray"
+ctxBackground.fill()
+
+for (let i = 0; i < 4; i++) {
+    for (let j = 0; j < 4; j++) {
+        ctxBackground.beginPath()
+        ctxBackground.rect(16+i*76,16+j*76,60,60)
+        ctxBackground.fillStyle = COLORS[0]
+        ctxBackground.fill()
+    }
+}
 
 let isGameRunning: boolean = true;
 let totalScore: number = 0;
@@ -116,6 +140,10 @@ const start = () => {
     }
 
     spawnRandomTile()
+    spawnRandomTile()
+    spawnRandomTile()
+    spawnRandomTile()
+    spawnRandomTile()
     drawGrid()
 }
 
@@ -133,22 +161,26 @@ const spawnRandomTile = () => {
 
     for (let xAxis = 0; xAxis < 4; xAxis++) {
         for (let yAxis = 0; yAxis < 4; yAxis++) {
-            if (grid[xAxis]![yAxis]?.getValue() === 0){
+            if (grid[xAxis]![yAxis]!.getValue() === 0){
                 arr.push([xAxis,yAxis])
             }
         }
     }
+    
+    if (arr.length === 0) {
+        return
+    }
+
     let randomIndex = Math.floor(Math.random() * arr.length)
     let i = arr[randomIndex]![0]!
     let j = arr[randomIndex]![1]!
     let randomNumber = Math.floor(Math.random()*10)+1
-    randomNumber > 2 ? grid[i]![j]!.setValue(2) : grid[i]![j]!.setValue(4)
+    randomNumber > 2 
+        ? grid[i]![j]!.setValue(2) 
+        : grid[i]![j]!.setValue(4)
 }
 
 const drawGrid = () => {
-    ctx.rect(0,0,320,320)
-    ctx.fillStyle = "gray"
-    ctx.fill()
 
     forEachTile((tile) => {
         tile.drawTile(ctx)
@@ -182,48 +214,308 @@ const runGame = (move: string) => {
 
     switch (move){
         case "left":
+            moveTilesLeft()
             break
 
         case "right":
+            moveTilesRight()
             break
 
         case "up":
+            moveTilesUp()
             break
 
         case "down":
+            moveTilesDown()
             break
 
         default:
             break
     }
 
-    if(!compareTiles()){
+    if(compareTiles()){
         return
     }
 
+    animate()
     setScore()
-    spawnRandomTile()
     drawGrid()
 }
 
-const checkGameState = () => {
-    forEachTile((tile) => {
-        if(tile.getValue() >= 2048){
-            isGameRunning = false;
-            console.log("you won")
-            return
+const moveTilesLeft = () => {
+    for (let y = 0; y < 4; y++) {
+        const row = [
+            grid[0]![y]!,
+            grid[1]![y]!,
+            grid[2]![y]!,
+            grid[3]![y]!
+        ]
+
+        const newRow: Tile[] = []
+        let skip = false
+
+        for (let i = 0; i < 4; i++) {
+            if (skip) {
+                skip = false;
+                continue
+            }
+
+            const tile = row[i]!
+            if (tile.getValue() === 0){
+                continue
+            }
+
+            if (
+                i < 3 &&
+                tile.getValue() === row[i + 1]!.getValue() &&
+                row[i + 1]!.getValue() !== 0
+            ) {
+                tile.setValue(tile.getValue() * 2)
+                row[i + 1]!.setToRemove(true)
+                skip = true
+            }
+
+            newRow.push(tile);
         }
-    })
-    
+
+        while (newRow.length < 4) {
+            newRow.push(new Tile(0, 0))
+        }
+
+        for (let x = 0; x < 4; x++) {
+            const tile = newRow[x]!
+            tile.setTargetX(16 + x * 76)
+            tile.setTargetY(16 + y * 76)
+            grid[x]![y]! = tile
+        }
+    }
+}
+
+const moveTilesRight = () => {
+    for (let y = 0; y < 4; y++) {
+        const row = [
+            grid[3]![y]!,
+            grid[2]![y]!,
+            grid[1]![y]!,
+            grid[0]![y]!
+        ]
+
+        const newRow: Tile[] = []
+        let skip = false
+
+        for (let i = 0; i < 4; i++) {
+            if (skip) {
+                skip = false
+                continue
+            }
+
+            const tile = row[i]!
+            if (tile.getValue() === 0) continue
+
+            if (
+                i < 3 &&
+                tile.getValue() === row[i + 1]!.getValue() &&
+                row[i + 1]!.getValue() !== 0
+            ) {
+                tile.setValue(tile.getValue() * 2)
+                row[i + 1]!.setToRemove(true)
+                skip = true
+            }
+
+            newRow.push(tile)
+        }
+
+        while (newRow.length < 4) {
+            newRow.push(new Tile(0, 0))
+        }
+
+        for (let x = 0; x < 4; x++) {
+            const tile = newRow[x]!
+            tile.setTargetX(16 + (3 - x) * 76)
+            tile.setTargetY(16 + y * 76)
+            grid[3 - x]![y]! = tile
+        }
+    }
+}
+
+const moveTilesUp = () => {
+    for (let x = 0; x < 4; x++) {
+        const col = [
+            grid[x]![0]!,
+            grid[x]![1]!,
+            grid[x]![2]!,
+            grid[x]![3]!
+        ]
+
+        const newCol: Tile[] = []
+        let skip = false
+
+        for (let i = 0; i < 4; i++) {
+            if (skip) {
+                skip = false
+                continue
+            }
+
+            const tile = col[i]!
+            if (tile.getValue() === 0) continue
+
+            if (
+                i < 3 &&
+                tile.getValue() === col[i + 1]!.getValue() &&
+                col[i + 1]!.getValue() !== 0
+            ) {
+                tile.setValue(tile.getValue() * 2)
+                col[i + 1]!.setToRemove(true)
+                skip = true
+            }
+
+            newCol.push(tile)
+        }
+
+        while (newCol.length < 4) {
+            newCol.push(new Tile(0, 0))
+        }
+
+        for (let y = 0; y < 4; y++) {
+            const tile = newCol[y]!
+            tile.setTargetX(16 + x * 76)
+            tile.setTargetY(16 + y * 76)
+            grid[x]![y]! = tile
+        }
+    }
+}
+
+const moveTilesDown = () => {
+    for (let x = 0; x < 4; x++) {
+        const col = [
+            grid[x]![3]!,
+            grid[x]![2]!,
+            grid[x]![1]!,
+            grid[x]![0]!
+        ]
+
+        const newCol: Tile[] = []
+        let skip = false
+
+        for (let i = 0; i < 4; i++) {
+            if (skip) {
+                skip = false
+                continue
+            }
+
+            const tile = col[i]!
+            if (tile.getValue() === 0) continue
+
+            if (
+                i < 3 &&
+                tile.getValue() === col[i + 1]!.getValue() &&
+                col[i + 1]!.getValue() !== 0
+            ) {
+                tile.setValue(tile.getValue() * 2)
+                col[i + 1]!.setToRemove(true)
+                skip = true
+            }
+
+            newCol.push(tile)
+        }
+
+        while (newCol.length < 4) {
+            newCol.push(new Tile(0, 0))
+        }
+
+        for (let y = 0; y < 4; y++) {
+            const tile = newCol[y]!
+            tile.setTargetX(16 + x * 76)
+            tile.setTargetY(16 + (3 - y) * 76)
+            grid[x]![3 - y]! = tile
+        }
+    }
+}
+
+const animate = () => {
+    let animating = true
+
+    const step = () => {
+        animating = false
+        cleatCanvas()
+
+        forEachTile((tile) => {
+            const tx = tile.getTargetX()
+            const ty = tile.getTargetY()
+
+            if (tx !== null) {
+                const cx = tile.getCurrentX()
+                const dx = tx - cx
+
+                if (Math.abs(dx) > ANIMATION_SPEED) {
+                    tile.setCurrentX(cx + Math.sign(dx) * ANIMATION_SPEED)
+                    animating = true
+                } else {
+                    tile.setCurrentX(tx)
+                    tile.setTargetX(null)
+                }
+            }
+
+            if (ty !== null) {
+                const cy = tile.getCurrentY()
+                const dy = ty - cy
+
+                if (Math.abs(dy) > ANIMATION_SPEED) {
+                    tile.setCurrentY(cy + Math.sign(dy) * ANIMATION_SPEED)
+                    animating = true
+                } else {
+                    tile.setCurrentY(ty)
+                    tile.setTargetY(null)
+                }
+            }
+
+            tile.drawTile(ctx)
+        })
+
+        if (animating) {
+            requestAnimationFrame(step)
+        } else {
+            cleanupAfterAnimation()
+            drawGrid()
+        }
+    }
+
+    requestAnimationFrame(step)
+}
+
+const cleanupAfterAnimation = () => {
     forEachTile((tile) => {
-        if(tile.getValue() === 0){
-            return
+        if (tile.getToRemove()) {
+            tile.setValue(0)
+            tile.setToRemove(false)
         }
     })
 
+    spawnRandomTile()
+}
+
+const checkGameState = () => {
+    for (let xAxis = 0; xAxis < 4; xAxis++) {
+        for (let yAxis = 0; yAxis < 4; yAxis++) {
+            if (grid[xAxis]![yAxis]!.getValue() >= 2048) {
+                isGameRunning = false
+                console.log("you won")
+                return
+            }
+        }
+    }
+
+    for (let xAxis = 0; xAxis < 4; xAxis++) {
+        for (let yAxis = 0; yAxis < 4; yAxis++) {
+            if (grid[xAxis]![yAxis]!.getValue() === 0) {
+                return
+            }
+        }
+    }
+
     for (let xAxis = 0; xAxis < 3; xAxis++) {
         for (let yAxis = 0; yAxis < 4; yAxis++) {
-            if (grid[xAxis]![yAxis]!.getValue() === grid[xAxis+1]![yAxis]!.getValue()){
+            if (grid[xAxis]![yAxis]!.getValue() === grid[xAxis + 1]![yAxis]!.getValue()) {
                 return
             }
         }
@@ -231,25 +523,20 @@ const checkGameState = () => {
 
     for (let xAxis = 0; xAxis < 4; xAxis++) {
         for (let yAxis = 0; yAxis < 3; yAxis++) {
-            if (grid[xAxis]![yAxis]!.getValue() === grid[xAxis]![yAxis+1]!.getValue()){
+            if (grid[xAxis]![yAxis]!.getValue() === grid[xAxis]![yAxis + 1]!.getValue()) {
                 return
             }
         }
     }
 
-    isGameRunning = false;
+    isGameRunning = false
     console.log("you lost")
-    return
 }
 
 const cloneGrids = () => {
     for (let xAxis = 0; xAxis < 4; xAxis++) {
         for (let yAxis = 0; yAxis < 4; yAxis++) {
-            gridBefore[xAxis]![yAxis]?.setCurrentX(grid[xAxis]![yAxis]?.getCurrentX()!)
-            gridBefore[xAxis]![yAxis]?.setCurrentY(grid[xAxis]![yAxis]?.getCurrentY()!)
-            gridBefore[xAxis]![yAxis]?.setTargetX(grid[xAxis]![yAxis]?.getTargetX()!)
-            gridBefore[xAxis]![yAxis]?.setTargetY(grid[xAxis]![yAxis]?.getTargetY()!)
-            gridBefore[xAxis]![yAxis]?.setValue(grid[xAxis]![yAxis]?.getValue()!)
+            gridBefore[xAxis]![yAxis]!.setValue(grid[xAxis]![yAxis]!.getValue())
         }
     }
 }
@@ -257,14 +544,7 @@ const cloneGrids = () => {
 const compareTiles = (): boolean => {
     for (let xAxis = 0; xAxis < 4; xAxis++) {
         for (let yAxis = 0; yAxis < 4; yAxis++) {
-            const tileBefore = gridBefore[xAxis]![yAxis]
-            const tileAfter = grid[xAxis]![yAxis]
-
-            if (!tileBefore || !tileAfter) {
-                return false
-            }
-
-            if (!tileBefore.isEqual(tileAfter)){
+            if (gridBefore[xAxis]![yAxis]!.getValue() !== grid[xAxis]![yAxis]!.getValue()) {
                 return false
             }
         }

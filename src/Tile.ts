@@ -6,6 +6,7 @@ export class Tile {
     private targetX: number | null = null;
     private targetY: number | null = null;
     private value: number;
+    private toRemove: boolean = false;
 
     constructor (x:number, y:number) {
         this.currentX = x;
@@ -53,13 +54,21 @@ export class Tile {
         this.value = value;
     }
 
-    public drawTile = (ctx: CanvasRenderingContext2D) => {
-        ctx.beginPath()
-        ctx.rect(this.currentX, this.currentY, 60, 60)
-        ctx.fillStyle = COLORS[this.value as keyof typeof COLORS || 0] || "#0000FF"
-        ctx.fill()
+    public getToRemove(): boolean {
+        return this.toRemove
+    }
 
+    public setToRemove(condition: boolean): void {
+        this.toRemove = condition;
+    }
+
+    public drawTile = (ctx: CanvasRenderingContext2D) => {
         if (this.value > 0){
+            ctx.beginPath()
+            ctx.rect(this.currentX, this.currentY, 60, 60)
+            ctx.fillStyle = COLORS[this.value as keyof typeof COLORS || 0] || "#0000FF"
+            ctx.fill()
+
             ctx.fillStyle = "black"
             ctx.textAlign = "center"
             ctx.textBaseline = "middle"
@@ -67,15 +76,5 @@ export class Tile {
             // + 30 offset for text to be in the middle of tile
             ctx.fillText(String(this.value), this.currentX+30, this.currentY+30);
         }
-    }
-    
-    public isEqual(other: Tile): boolean {
-        return (
-            this.getCurrentX() === other.getCurrentX() &&
-            this.getCurrentY() === other.getCurrentY() &&
-            this.getTargetX() === other.getTargetX() &&
-            this.getTargetY() === other.getTargetY() &&
-            this.getValue() === other.getValue()
-        )
     }
 }

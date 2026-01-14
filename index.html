@@ -5,6 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>2048</title>
     <link rel="icon" href="favicon.ico">
+    <style>
+      .container {
+        position: relative;
+      }
+      #canvas-background,
+      #canvas {
+          position: absolute;
+          top: 0;
+          left: 0;
+      }
+      #canvas-background {
+          z-index: 0;
+          pointer-events: none;
+      }
+      #canvas {
+          z-index: 1;
+      }
+    </style>
 </head>
 <body>
     <h3 style="display: inline;">Score: </h3>
@@ -13,7 +31,10 @@
     <label id="record-label">0</label>
     <button id="restart-button">Restart</button>
     <br>
-    <canvas id="canvas"></canvas>
+    <div class="container">
+        <canvas id="canvas"></canvas>
+        <canvas id="canvas-background"></canvas>
+    </div>
     <script type="module" src="dist/index.js"></script>
 </body>
 </html>
