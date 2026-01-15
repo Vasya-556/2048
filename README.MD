@@ -10,7 +10,8 @@ A 2048 clone.
 - [Usage](#usage)
 - [Installation](#installation)
   - [Manual](#manual)
-  - [With script](#with-script)
+  - [With a script](#with-a-script)
+  - [With a docker](#with-a-docker)
 - [License](#license)
 
 # Usage
@@ -21,7 +22,7 @@ Press arrows or swipe left, right, up or down to move tiles. Try to score 2048 t
 
 1. Clone repository 
 ```bash
-git clone https://github.com/Vasya-556/2048
+git clone https://github.com/Vasya-556/2048.git
 ```
 2. Go into project folder
 ```bash
@@ -29,27 +30,34 @@ cd 2048
 ```
 
 ## Manual
-3. Install dependencies
+1. Install dependencies
 ```bash
 npm install
 ```
-4. Build
+2. Build
 ```bash
-npx tsc
+npm run build
 ```
-5. Start server
+3. Start server
 ```bash
 npm run start
 ```
 
-## With script
-3. Build project
+## With a script
+1. Build project
 ```bash
 ./server.sh -b
 ```
-4. Start server
+2. Start server
 ```bash
 ./server.sh -s
+```
+
+## With a docker
+1. Start Docker engine
+2. Run
+```bash
+docker compose up
 ```
 
 # License

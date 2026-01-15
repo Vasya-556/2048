@@ -4,7 +4,7 @@ while [[ $# -gt 0 ]]; do
 case "$1" in
 --build|-b)
 npm install
-npx tsc
+npm run build
 echo "Project ready"
 ;;
 --start|-s)
