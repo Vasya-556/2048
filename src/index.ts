@@ -10,6 +10,8 @@ const ctx = canvas.getContext("2d")
 const canvasBackground = document.getElementById("canvas-background") as HTMLCanvasElement;
 const ctxBackground = canvasBackground.getContext("2d")
 const ANIMATION_SPEED = 19;
+const resultWin = document.getElementById("result-win") as HTMLHeadingElement
+const resultLose = document.getElementById("result-lose") as HTMLHeadingElement
 
 if (!ctx) {
     throw new Error("Could not get 2D context");
@@ -50,6 +52,8 @@ let touchEndY: number = 0;
 
 restartButton.addEventListener("click", () => {
     cleatCanvas()
+    resultWin.style.display = "none"
+    resultLose.style.display = "none"
     start()
 })
 
@@ -98,8 +102,13 @@ canvas.addEventListener("touchend", (e: TouchEvent) => {
 })
 
 const handleGesture = () => {
+    const swipeDistance = 10;
+
+    const dx = touchStartX - touchEndX;
+    const dy = touchStartY - touchEndY;
+
     // left/right move
-    if (Math.abs(touchStartX - touchEndX) > Math.abs(touchStartY - touchEndY) && Math.abs(touchStartX - touchEndX) > 20){
+    if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > swipeDistance){
         if (touchStartX > touchEndX) {
             runGame("left");
         }
@@ -108,7 +117,7 @@ const handleGesture = () => {
         }
     }
     // up/down move
-    else if (Math.abs(touchStartX - touchEndX) < Math.abs(touchStartY - touchEndY) && Math.abs(touchStartX - touchEndX) > 20){
+    else if (Math.abs(dy) > Math.abs(dx) && Math.abs(dy) > swipeDistance){
         if (touchStartY > touchEndY) {
             runGame("up");
         }
@@ -116,7 +125,6 @@ const handleGesture = () => {
             runGame("down");
         }
     }
-
 }
 
 const cleatCanvas = () => {
@@ -236,6 +244,7 @@ const runGame = (move: string) => {
 
     animate()
     setScore()
+    setRecord()
     drawGrid()
 }
 
@@ -270,6 +279,7 @@ const moveTilesLeft = () => {
                 tile.setValue(tile.getValue() * 2)
                 row[i + 1]!.setToRemove(true)
                 skip = true
+                totalScore += tile.getValue()
             }
 
             newRow.push(tile);
@@ -317,6 +327,7 @@ const moveTilesRight = () => {
                 tile.setValue(tile.getValue() * 2)
                 row[i + 1]!.setToRemove(true)
                 skip = true
+                totalScore += tile.getValue()
             }
 
             newRow.push(tile)
@@ -364,6 +375,7 @@ const moveTilesUp = () => {
                 tile.setValue(tile.getValue() * 2)
                 col[i + 1]!.setToRemove(true)
                 skip = true
+                totalScore += tile.getValue()
             }
 
             newCol.push(tile)
@@ -411,6 +423,7 @@ const moveTilesDown = () => {
                 tile.setValue(tile.getValue() * 2)
                 col[i + 1]!.setToRemove(true)
                 skip = true
+                totalScore += tile.getValue()
             }
 
             newCol.push(tile)
@@ -496,7 +509,7 @@ const checkGameState = () => {
         for (let yAxis = 0; yAxis < 4; yAxis++) {
             if (grid[xAxis]![yAxis]!.getValue() >= 2048) {
                 isGameRunning = false
-                console.log("you won")
+                resultWin.style.display = "block"
                 return
             }
         }
@@ -527,7 +540,7 @@ const checkGameState = () => {
     }
 
     isGameRunning = false
-    console.log("you lost")
+    resultLose.style.display = "block"
 }
 
 const cloneGrids = () => {
