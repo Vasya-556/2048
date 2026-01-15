@@ -33,6 +33,7 @@ npm install
 ```bash
 npx tsc
 ```
+5. Open index.html with Live Server(or similiar)
 
 # License
 
