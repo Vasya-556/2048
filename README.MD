@@ -1,7 +1,9 @@
 # 2048
 
 A 2048 clone.
+
 ![](image.png)
+
 [Demo](https://vasya-556.github.io/2048/)
 
 # Table of Contents
