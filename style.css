@@ -1,0 +1,80 @@
+:root {
+    --text: #0d0c0d;
+    --background: #f1f1e3;
+    --primary: #a96aaf;
+    --accent: #ca64d3;
+}
+
+.container {
+    position: relative;
+    width: 320px;
+    height: 320px;
+}
+
+#canvas-background,
+#canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+#canvas-background {
+    z-index: 0;
+    pointer-events: none;
+}
+
+#canvas {
+    z-index: 1;
+}
+
+body {
+    background-color: var(--background);
+    color: var(--text);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 12px;
+    padding: 5px;
+}
+
+label, h3 {
+    font-family: "Nunito", sans-serif;
+    font-optical-sizing: auto;
+    font-style: normal;
+}
+
+label {
+    font-weight: 400;
+}
+
+h3 {
+    font-weight: 800;
+}
+
+button {
+    display: inline-block;
+    outline: none;
+    cursor: pointer;
+    border-radius: 3px;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 16px;
+    padding: 2px 16px;
+    height: 32px;
+    min-width: 60px;
+    min-height: 32px;
+    border: none;
+    color: var(--text);
+    background-color: var(--primary);
+    transition: background-color .17s ease,color .17s ease;
+
+    font-family: "Nunito", sans-serif;
+    font-optical-sizing: auto;
+    font-style: normal;
+    font-weight:600;
+}
+
+button:hover {
+    background-color: var(--accent);
+}

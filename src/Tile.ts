@@ -69,7 +69,7 @@ export class Tile {
             ctx.fillStyle = COLORS[this.value as keyof typeof COLORS || 0] || "#0000FF"
             ctx.fill()
 
-            ctx.fillStyle = "black"
+            ctx.fillStyle = "#0d0c0d"
             ctx.textAlign = "center"
             ctx.textBaseline = "middle"
             ctx.font = "24px Arial";

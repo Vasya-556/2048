@@ -26,7 +26,7 @@ canvasBackground.width = 320;
 canvasBackground.height = 320;
 
 ctxBackground.rect(0,0,320,320)
-ctxBackground.fillStyle = "gray"
+ctxBackground.fillStyle = "#bbada0"
 ctxBackground.fill()
 
 for (let i = 0; i < 4; i++) {
@@ -49,6 +49,7 @@ let touchEndX: number = 0;
 let touchEndY: number = 0;
 
 restartButton.addEventListener("click", () => {
+    cleatCanvas()
     start()
 })
 
@@ -139,10 +140,6 @@ const start = () => {
         }
     }
 
-    spawnRandomTile()
-    spawnRandomTile()
-    spawnRandomTile()
-    spawnRandomTile()
     spawnRandomTile()
     drawGrid()
 }
