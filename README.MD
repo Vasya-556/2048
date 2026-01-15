@@ -9,6 +9,8 @@ A 2048 clone.
 - [Table of Contents](#table-of-contents)
 - [Usage](#usage)
 - [Installation](#installation)
+  - [Manual](#manual)
+  - [With script](#with-script)
 - [License](#license)
 
 # Usage
@@ -25,6 +27,8 @@ git clone https://github.com/Vasya-556/2048
 ```bash
 cd 2048
 ```
+
+## Manual
 3. Install dependencies
 ```bash
 npm install
@@ -33,7 +37,20 @@ npm install
 ```bash
 npx tsc
 ```
-5. Open index.html with Live Server(or similiar)
+5. Start server
+```bash
+npm run start
+```
+
+## With script
+3. Build project
+```bash
+./server.sh -b
+```
+4. Start server
+```bash
+./server.sh -s
+```
 
 # License
 
